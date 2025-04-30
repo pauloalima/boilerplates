@@ -2,12 +2,12 @@ resource "proxmox_vm_qemu" "your-vm" {
 
   # SECTION General Settings
 
-  name = "vm-name"
-  desc = "description"
+  name = "tf-test-1"
+  desc = "VM creation with Terraform"
   agent = 1  # <-- (Optional) Enable QEMU Guest Agent
 
   # FIXME Before deployment, set the correct target node name
-  target_node = "your-proxmox-node"
+  target_node = "pve1"
 
   # FIXME Before deployment, set the desired VM ID (must be unique on the target node)
   vmid = "100"
@@ -18,7 +18,7 @@ resource "proxmox_vm_qemu" "your-vm" {
 
   # FIXME Before deployment, set the correct template or VM name in the clone field
   #       or set full_clone to false, and remote "clone" to manage existing (imported) VMs
-  clone = "your-clone-name"
+  clone = "temp-ubuntu-24-04"
   full_clone = true
 
   # !SECTION
@@ -43,7 +43,7 @@ resource "proxmox_vm_qemu" "your-vm" {
   memory = 2048
 
   # NOTE Minimum memory of the balloon device, set to 0 to disable ballooning
-  balloon = 2048
+  balloon = 0
   
   # !SECTION
 
@@ -51,7 +51,7 @@ resource "proxmox_vm_qemu" "your-vm" {
 
   network {
     id     = 0  # NOTE Required since 3.x.x
-    bridge = "vmbr1"
+    bridge = "vmlan100"
     model  = "virtio"
   }
 
@@ -67,17 +67,17 @@ resource "proxmox_vm_qemu" "your-vm" {
     ide {
       ide0 {
         cloudinit {
-          storage = "local-lvm"
+          storage = "VM_Data"
         }
       }
     }
     virtio {
       virtio0 {
         disk {
-          storage = "local-lvm"
+          storage = "VM_Data"
 
           # NOTE Since 3.x.x size change disk size will trigger a disk resize
-          size = "20G"
+          size = "24G"
 
           # NOTE Enable IOThread for better disk performance in virtio-scsi-single
           #      and enable disk replication
@@ -95,7 +95,7 @@ resource "proxmox_vm_qemu" "your-vm" {
   # FIXME Before deployment, adjust according to your network configuration
   ipconfig0 = "ip=0.0.0.0/0,gw=0.0.0.0"
   nameserver = "0.0.0.0"
-  ciuser = "your-username"
+  ciuser = "plima"
   sshkeys = var.PUBLIC_SSH_KEY
 
   # !SECTION
