@@ -10,7 +10,7 @@ resource "proxmox_vm_qemu" "your-vm" {
   target_node = "pve1"
 
   # FIXME Before deployment, set the desired VM ID (must be unique on the target node)
-  vmid = "100"
+  #vmid = ""
 
   # !SECTION
   
