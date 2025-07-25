@@ -4,11 +4,14 @@ volumes:
     driver: local
 services:
   prometheus:
-    image: docker.io/prom/prometheus:v3.3.0
+    image: docker.io/prom/prometheus:v3.5.0
     container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yaml
+      - --storage.tsdb.retention.time=7d
+      - --storage.tsdb.retention.size=2GB
     ports:
       - 9090:9090
-    command: "--config.file=/etc/prometheus/prometheus.yaml"
     volumes:
       - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
       - prometheus-data:/prometheus
